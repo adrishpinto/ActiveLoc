@@ -135,186 +135,189 @@ const Item = ({ project, index, deleteProject, openEdit }) => {
   );
 };
 
-  const Add = ({ setShow, getData }) => {
-    const [projectName, setProjectName] = useState("");
-    const [clientName, setClientName] = useState("");
-    const [deadline, setDeadline] = useState("");
-    const [error, setError] = useState("");
+const Add = ({ setShow, getData }) => {
+  const [projectName, setProjectName] = useState("");
+  const [clientName, setClientName] = useState("");
+  const [deadline, setDeadline] = useState("");
+  const [error, setError] = useState("");
 
-    const addProject = async () => {
-      if (!projectName || !clientName || !deadline) {
-        setError("All fields are required.");
-        return;
-      }
+  const addProject = async () => {
+    if (!projectName || !clientName || !deadline) {
+      setError("All fields are required.");
+      return;
+    }
 
-      try {
-        await axios.post("http://localhost:5000/", {
+    try {
+      await axios.post("http://localhost:5000/", {
+        project_name: projectName,
+        client_name: clientName,
+        deadline: deadline,
+      });
+
+      setShow(false);
+      getData();
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+      <div className="bg-white p-6 rounded-lg w-1/3">
+        <h2 className="text-2xl mb-4">Add New Project</h2>
+
+        <div className="mb-4">
+          <label className="block text-lg mb-2">Project Name</label>
+          <input
+            type="text"
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-lg mb-2">Client Name</label>
+          <input
+            type="text"
+            value={clientName}
+            onChange={(e) => setClientName(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+
+        <div className="mb-4">
+          <label className="block text-lg mb">Deadline (in days)</label>
+          <input
+            type="text"
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+
+        {error ? (
+          <p className="text-red-600 text-sm mb-2">{error}</p>
+        ) : (
+          <p className="text-white text-sm mb-2">..</p>
+        )}
+
+        <div className="flex justify-between">
+          <button
+            type="button"
+            className="px-4 py-2 bg-gray-600 text-white rounded-md"
+            onClick={() => setShow(false)}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={addProject}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md"
+          >
+            Add Project
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Edit = ({ setShow, getData, project }) => {
+  const [projectName, setProjectName] = useState(project.project_name);
+  const [clientName, setClientName] = useState(project.client_name);
+  const [deadline, setDeadline] = useState(project.deadline);
+  const [error, setError] = useState("");
+
+  const updateProject = async () => {
+    if (!projectName || !clientName || !deadline) {
+      setError("All fields are required.");
+      return;
+    }
+
+    try {
+      setShow(false);
+      const res = await axios.put(
+        `http://localhost:5000/api/projects/${project._id}`,
+        {
           project_name: projectName,
           client_name: clientName,
           deadline: deadline,
-        });
+        }
+      );
 
-        setShow(false);
-        getData();
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-
-    return (
-      <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-        <div className="bg-white p-6 rounded-lg w-1/3">
-          <h2 className="text-2xl mb-4">Add New Project</h2>
-
-          <div className="mb-4">
-            <label className="block text-lg mb-2">Project Name</label>
-            <input
-              type="text"
-              value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-lg mb-2">Client Name</label>
-            <input
-              type="text"
-              value={clientName}
-              onChange={(e) => setClientName(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label className="block text-lg mb">Deadline (in days)</label>
-            <input
-              type="text"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md"
-              required
-            />
-          </div>
-
-          {error ? (
-            <p className="text-red-600 text-sm mb-2">{error}</p>
-          ) : (
-            <p className="text-white text-sm mb-2">..</p>
-          )}
-
-          <div className="flex justify-between">
-            <button
-              type="button"
-              className="px-4 py-2 bg-gray-600 text-white rounded-md"
-              onClick={() => setShow(false)}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={addProject}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md"
-            >
-              Add Project
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const Edit = ({ setShow, getData, project }) => {
-    const [projectName, setProjectName] = useState(project.project_name);
-    const [clientName, setClientName] = useState(project.client_name);
-    const [deadline, setDeadline] = useState(project.deadline);
-    const [error, setError] = useState("");
-  
-    const updateProject = async () => {
-      if (!projectName || !clientName || !deadline) {
-        setError("All fields are required.");
-        return;
-      }
-  
-      try {
-        setShow(false);
-        const res = await axios.put(
-          `http://localhost:5000/api/projects/${project._id}`,
-          {
-            project_name: projectName,
-            client_name: clientName,
-            deadline: deadline,
-          }
-        );
-  
-        getData();
-      } catch (error) {
-        console.error("error: ", error);
-      }
-    };
-  
-    useEffect(() => {
       getData();
-    }, [updateProject]);
-  
-    return (
-      <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
-        <div className="bg-white p-6 rounded-lg w-1/3">
-          <h2 className="text-2xl mb-4">Edit Project</h2>
-  
-          <div className="mb-4">
-            <label className="block text-lg mb-2">Project Name</label>
-            <input
-              type="text"
-              value={projectName}
-              onChange={(e) => setProjectName(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-lg mb-2">Client Name</label>
-            <input
-              type="text"
-              value={clientName}
-              onChange={(e) => setClientName(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label className="block text-lg mb-2">Deadline (in days)</label>
-            <input
-              type="text"
-              value={deadline}
-              onChange={(e) => setDeadline(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-md"
-              required
-            />
-          </div>
-  
-          {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
-  
-          <div className="flex justify-between">
-            <button
-              type="button"
-              className="px-4 py-2 bg-gray-600 text-white rounded-md"
-              onClick={() => setShow(false)}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={updateProject}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md"
-            >
-              Update Project
-            </button>
-          </div>
+    } catch (error) {
+      console.error("error: ", error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, [updateProject]);
+
+  return (
+    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center">
+      <div className="bg-white p-6 rounded-lg w-1/3">
+        <h2 className="text-2xl mb-4">Edit Project</h2>
+
+        <div className="mb-4">
+          <label className="block text-lg mb-2">Project Name</label>
+          <input
+            type="text"
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-lg mb-2">Client Name</label>
+          <input
+            type="text"
+            value={clientName}
+            onChange={(e) => setClientName(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-lg mb-2">Deadline (in days)</label>
+          <input
+            type="text"
+            value={deadline}
+            onChange={(e) => setDeadline(e.target.value)}
+            className="w-full p-2 border border-gray-300 rounded-md"
+            required
+          />
+        </div>
+
+        {error ? (
+          <p className="text-red-600 text-sm mb-2">{error}</p>
+        ) : (
+          <p className="text-white text-sm mb-2">..</p>
+        )}
+
+        <div className="flex justify-between">
+          <button
+            type="button"
+            className="px-4 py-2 bg-gray-600 text-white rounded-md"
+            onClick={() => setShow(false)}
+          >
+            Cancel
+          </button>
+          <button
+            onClick={updateProject}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md"
+          >
+            Update Project
+          </button>
         </div>
       </div>
-    );
-  };
-  
+    </div>
+  );
+};
 
 export default App;
