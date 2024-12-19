@@ -10,7 +10,7 @@ const App = () => {
 
   const deleteProject = async (projectId) => {
     try {
-      const response = await axios.delete(`${URL}${projectId}`);
+      const response = await axios.delete(`${URL}/${projectId}`);
       console.log(response.data);
       getData();
     } catch (error) {
@@ -238,7 +238,7 @@ const Edit = ({ setShow, getData, project }) => {
 
     try {
       setShow(false);
-      const res = await axios.put(`${URL}${project._id}`, {
+      const res = await axios.put(`${URL}/${project._id}`, {
         project_name: projectName,
         client_name: clientName,
         deadline: deadline,
