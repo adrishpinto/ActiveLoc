@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { FaTrashAlt, FaEdit } from "react-icons/fa";
 import axios from "axios";
-
+const URL = import.meta.env.VITE_URL;
 const App = () => {
-  const URL = import.meta.env.VITE_URL;
   const [projects, setProjects] = useState([]);
   const [showAdd, setShowAdd] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
@@ -148,7 +147,7 @@ const Add = ({ setShow, getData }) => {
     }
 
     try {
-      await axios.post("http://localhost:5000/", {
+      await axios.post(`${URL}`, {
         project_name: projectName,
         client_name: clientName,
         deadline: deadline,
@@ -239,14 +238,11 @@ const Edit = ({ setShow, getData, project }) => {
 
     try {
       setShow(false);
-      const res = await axios.put(
-        `http://localhost:5000/api/projects/${project._id}`,
-        {
-          project_name: projectName,
-          client_name: clientName,
-          deadline: deadline,
-        }
-      );
+      const res = await axios.put(`${URL}${project._id}`, {
+        project_name: projectName,
+        client_name: clientName,
+        deadline: deadline,
+      });
 
       getData();
     } catch (error) {
