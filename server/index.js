@@ -1,4 +1,4 @@
-// Import necessary modules
+
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -9,8 +9,10 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+}));
 const port = 5000;
 app.use("/api/projects", router);
 
